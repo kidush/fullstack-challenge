@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import './Cover.css';
 import _ from 'lodash';
 
+import CoverOverlay from '../CoverOverlay';
+
 export default class Cover extends Component {
     constructor(props) {
       super(props);
-      this.state = { image_size: this.imageSize(window.innerWidth), mouseOver: false }
+      this.state = { image_size: this.imageSize(window.innerWidth), mouseOver: false, mouseClick: false }
     }
 
     static propTypes = {
@@ -31,7 +33,22 @@ export default class Cover extends Component {
     }
 
     showDetails(show) {
-      this.setState({ mouseOver: show })
+      this.setState({ mouseOver: show });
+    }
+
+    showOverlay(e) {
+      e.stopPropagation();
+
+      if (this.state.mouseClick) {
+        this.setState({ mouseClick: false });
+      } else {
+        this.setState({ mouseClick: true });
+      }
+    }
+
+    handleUpvoteClick(e) {
+      e.stopPropagation();
+      this.props.upVote.call(this);
     }
 
     coverDate() {
@@ -39,12 +56,13 @@ export default class Cover extends Component {
       return new Date(date.date).getFullYear();
     }
 
+
     coverUpvoted() {
       if(!this.props.upVoted) { return null; }
 
       return (<div className="cover-upvoted">
           <div className="cover-heart-on"></div>
-        </div>)
+        </div>);
     }
 
     renderDetail() {
@@ -52,7 +70,7 @@ export default class Cover extends Component {
 
       return (
         <div className="cover-detail">
-          <div className="cover-heart" onClick={ this.props.upVote.bind(this) }></div>
+          <div className="cover-heart" onClick={ this.handleUpvoteClick.bind(this) }></div>
           <div className="cover-footer">
             <div className="cover-title">
               { this.props.comicData.title }
@@ -66,20 +84,36 @@ export default class Cover extends Component {
         );
     }
 
+    renderOverlay() {
+      if (!this.state.mouseClick) { return null; }  
+
+      return (
+        <CoverOverlay
+          click={ this.showOverlay.bind(this) }
+          comic={ this.props.comicData }
+          cover={ this.coverImage.call(this) }
+          image_size={ this.state.image_size } />
+      );
+    }
+
     coverImage() {
       return `${this.props.comicData.thumbnail.path}/${this.state.image_size}.${this.props.comicData.thumbnail.extension}`;
     }
 
     render() {
       return (
-        <div className="pure-u-23-24 pure-u-md-1-4 pure-u-lg-1-5"
+        <div href="#overlay" className="pure-u-23-24 pure-u-md-1-4 pure-u-lg-1-5"
           onMouseEnter={ this.showDetails.bind(this, true) }
           onMouseLeave={ this.showDetails.bind(this, false) }>
-          <div className="cover">
+
+          <div className="cover"
+            onClick={ this.showOverlay.bind(this) }>
+
             <img className="cover-image" alt={ this.props.comicData.title } src={ this.coverImage.call(this) } />
             { this.renderDetail() }
             { this.coverUpvoted() }
           </div>
+          { this.renderOverlay() }
         </div>
       );
     }

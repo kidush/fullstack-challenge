@@ -15,8 +15,8 @@ const overlay = (props) => {
           <img src={ props.cover } />
           <p>Issue Number: {props.comic.issueNumber}</p>
           <p>ISBN: {props.comic.isbn}</p>
-          <p>Varian Description: {props.comic.variantDescription}</p>
-        </div> 
+          <p>Variant Description: {props.comic.variantDescription}</p>
+        </div>
       </div>
     </div>
   );

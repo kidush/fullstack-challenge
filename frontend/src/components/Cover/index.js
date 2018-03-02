@@ -37,8 +37,6 @@ export default class Cover extends Component {
     }
 
     showOverlay(e) {
-      e.stopPropagation();
-
       if (this.state.mouseClick) {
         this.setState({ mouseClick: false });
       } else {

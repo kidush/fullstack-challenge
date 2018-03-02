@@ -89,8 +89,7 @@ export default class Cover extends Component {
         <CoverOverlay
           click={ this.showOverlay.bind(this) }
           comic={ this.props.comicData }
-          cover={ this.coverImage.call(this) }
-          image_size={ this.state.image_size } />
+          cover={ this.coverImage.call(this) }/>
       );
     }
 
